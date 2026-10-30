@@ -59,9 +59,22 @@
     font-size: 16px; /* 16px để iPhone không tự phóng to khi chạm vào ô nhập */ width: 100%; font-family: inherit;
   }
   input[type="file"] { font-size: 16px; max-width: 100%; }
-  .thumb { max-width: 100%; max-height: 180px; border-radius: 10px; border: 1px solid rgba(255,255,255,.2); justify-self: start; }
-  label.check { display: flex; gap: 10px; align-items: flex-start; font-weight: 400; font-size: 14px; line-height: 1.5; }
-  label.check input { margin-top: 3px; width: 20px; height: 20px; flex: none; accent-color: #ffd166; }
+  .field { display: grid; gap: 8px; font-weight: 600; font-size: 15px; }
+  .field-t small, .up small { font-weight: 400; opacity: .75; line-height: 1.45; }
+  .up { position: relative; }
+  .up-empty {
+    display: grid; justify-items: center; gap: 6px; text-align: center; padding: 26px 16px; cursor: pointer;
+    border: 2px dashed rgba(255,255,255,.4); border-radius: 14px; background: rgba(0,0,0,.18); font-weight: 400;
+    transition: background .15s, border-color .15s; min-height: 148px; align-content: center;
+  }
+  .up-empty b { font-size: 17px; font-weight: 700; }
+  .up-ico { font-size: 34px; line-height: 1; }
+  .up-empty:hover, .up.over .up-empty { background: rgba(255,209,102,.12); border-color: #ffd166; }
+  .up-empty:focus-visible { outline: 3px solid #8ab4ff; outline-offset: 2px; }
+  .up-done { display: grid; gap: 10px; justify-items: start; padding: 10px; border: 1px solid rgba(255,255,255,.2); border-radius: 14px; background: rgba(0,0,0,.18); }
+  .up-done img { max-width: 100%; max-height: 240px; border-radius: 10px; }
+  .up-actions { display: flex; gap: 8px; }
+  .btn.sm { min-height: 40px; padding: 8px 14px; font-size: 14px; }
   .row2 { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: end; }
   #ketqua { display: none; background: rgba(255,209,102,.12); border: 1px solid rgba(255,209,102,.4); border-radius: 16px; padding: 18px 20px; line-height: 1.7; max-width: 640px; margin-top: 16px; }
   #ketqua code { background: rgba(0,0,0,.35); padding: 2px 8px; border-radius: 6px; font-size: 16px; word-break: break-all; }
@@ -124,27 +137,46 @@
   <section id="dat-hang">
     <h2>Gửi ảnh cần chỉnh</h2>
     <p class="sub">Điền thông tin và chọn ảnh. Cần ít nhất <b>một</b> trong hai: yêu cầu về ánh sáng bằng chữ hoặc ảnh có ánh sáng bạn thích. Gửi xong bạn nhận mã đơn — hãy lưu lại để xem và tải ảnh khi xong.</p>
-    <form id="form-don">
-      <label>Ảnh cần chỉnh <small>JPG, PNG hoặc WEBP, tối đa 20MB.</small>
-        <input type="file" id="anh" accept="image/jpeg,image/png,image/webp" required>
-        <img class="thumb" id="th-anh" alt="Ảnh bạn chọn" hidden>
-      </label>
-      <label>Ảnh có ánh sáng muốn giống <small>Không bắt buộc. Một ảnh có ánh sáng, tông màu bạn thích.</small>
-        <input type="file" id="mau" accept="image/jpeg,image/png,image/webp">
-        <img class="thumb" id="th-mau" alt="Ảnh phong cách bạn chọn" hidden>
-      </label>
-      <label>Yêu cầu về ánh sáng <small>Ví dụ: sáng hơn, ánh sáng chiếu từ bên trái, ấm hơn, cứu vùng tối do ngược sáng. Viết ngắn, rõ từng ý.</small>
+    <form id="form-don" novalidate>
+      <div class="field">
+        <div class="field-t">Ảnh cần chỉnh</div>
+        <div class="up" id="up-anh">
+          <input type="file" id="anh" accept="image/jpeg,image/png,image/webp" hidden>
+          <label class="up-empty" for="anh" tabindex="0">
+            <span class="up-ico" aria-hidden="true">📷</span>
+            <b>Tải ảnh lên</b>
+            <small>Bấm để chọn ảnh, hoặc kéo ảnh vào đây.<br>JPG, PNG hoặc WEBP, tối đa 20MB.</small>
+          </label>
+          <div class="up-done" hidden>
+            <img alt="Ảnh bạn đã chọn">
+            <div class="up-actions">
+              <label class="btn btn-ghost sm" for="anh">Đổi ảnh</label>
+              <button type="button" class="btn btn-ghost sm up-x">Xóa</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <div class="field-t">Ảnh phong cách muốn giống <small>Không bắt buộc</small></div>
+        <div class="up" id="up-mau">
+          <input type="file" id="mau" accept="image/jpeg,image/png,image/webp" hidden>
+          <label class="up-empty" for="mau" tabindex="0">
+            <span class="up-ico" aria-hidden="true">🎨</span>
+            <b>Tải ảnh phong cách lên</b>
+            <small>Một ảnh có ánh sáng, tông màu bạn thích.<br>Bấm để chọn, hoặc kéo ảnh vào đây.</small>
+          </label>
+          <div class="up-done" hidden>
+            <img alt="Ảnh phong cách bạn đã chọn">
+            <div class="up-actions">
+              <label class="btn btn-ghost sm" for="mau">Đổi ảnh</label>
+              <button type="button" class="btn btn-ghost sm up-x">Xóa</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <label class="field">
+        <span class="field-t">Yêu cầu về ánh sáng <small>Ví dụ: sáng hơn, ánh sáng chiếu từ bên trái, ấm hơn, cứu vùng tối do ngược sáng. Viết ngắn, rõ từng ý.</small></span>
         <textarea id="yeucau" rows="3" maxlength="500" placeholder="Bạn muốn ánh sáng thế nào?"></textarea>
-      </label>
-      <label>Tên của bạn
-        <input type="text" id="ten" required maxlength="80" placeholder="Ví dụ: Anh Tuấn" autocomplete="name">
-      </label>
-      <label>Số điện thoại / Zalo
-        <input type="tel" id="sdt" required maxlength="20" placeholder="Để liên hệ khi cần" autocomplete="tel">
-      </label>
-      <label class="check">
-        <input type="checkbox" id="dongy" required>
-        <span>Tôi xác nhận ảnh là của tôi, hoặc tôi đã được người trong ảnh đồng ý cho chỉnh sửa. Tôi hiểu ảnh sẽ tự động xóa sau 2 ngày.</span>
       </label>
       <div><button class="btn btn-gold" type="submit" id="nut-gui">Gửi yêu cầu</button></div>
     </form>
@@ -272,39 +304,54 @@
     bad_type: 'Loại file không được hỗ trợ. Chỉ nhận ảnh JPG, PNG, WEBP.',
     missing_files: 'Bạn cần chọn ảnh cần chỉnh.',
     need_request: 'Hãy gõ yêu cầu hoặc chọn một ảnh phong cách để Muse biết bạn muốn gì.',
-    need_consent: 'Bạn cần tích vào ô xác nhận quyền sử dụng ảnh.',
     too_many_requests: 'Bạn gửi quá nhiều lần. Vui lòng thử lại sau ít phút.',
   };
 
-  // Hiện ảnh xem trước ngay khi chọn file; ảnh quá lớn thì báo luôn.
-  function preview(inputId, imgId) {
-    const input = document.getElementById(inputId), img = document.getElementById(imgId);
+  // Ô tải ảnh: bấm hoặc kéo ảnh vào; có xem trước, nút Đổi/Xóa. Ảnh quá lớn hoặc sai loại thì báo ngay.
+  function uploadBox(id) {
+    const input = document.getElementById(id), box = document.getElementById('up-' + id);
+    const empty = box.querySelector('.up-empty'), done = box.querySelector('.up-done'), img = done.querySelector('img');
+    const clear = () => {
+      if (img.src) URL.revokeObjectURL(img.src);
+      img.removeAttribute('src');
+      input.value = '';
+      done.hidden = true;
+      empty.hidden = false;
+    };
     input.addEventListener('change', () => {
-      if (img.src) { URL.revokeObjectURL(img.src); img.removeAttribute('src'); }
-      img.hidden = true;
       const f = input.files[0];
-      if (!f) return;
-      if (f.size > MAX_IMG) { input.value = ''; show(LOI.file_too_large); return; }
+      if (!f) return clear();
+      if (!/^image\/(jpeg|png|webp)$/.test(f.type)) { clear(); show(LOI.bad_type); return; }
+      if (f.size > MAX_IMG) { clear(); show(LOI.file_too_large); return; }
+      if (img.src) URL.revokeObjectURL(img.src);
       img.src = URL.createObjectURL(f);
-      img.hidden = false;
+      empty.hidden = true;
+      done.hidden = false;
+    });
+    box.querySelector('.up-x').addEventListener('click', clear);
+    empty.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); } });
+    for (const t of ['dragenter', 'dragover']) box.addEventListener(t, (e) => { e.preventDefault(); box.classList.add('over'); });
+    for (const t of ['dragleave', 'drop']) box.addEventListener(t, () => box.classList.remove('over'));
+    box.addEventListener('drop', (e) => {
+      e.preventDefault();
+      if (e.dataTransfer.files[0]) { input.files = e.dataTransfer.files; input.dispatchEvent(new Event('change')); }
     });
   }
-  preview('anh', 'th-anh');
-  preview('mau', 'th-mau');
+  uploadBox('anh');
+  uploadBox('mau');
 
   const form = document.getElementById('form-don');
   const nut = document.getElementById('nut-gui');
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     const yeucau = document.getElementById('yeucau').value.trim();
+    const anh = document.getElementById('anh').files[0];
     const mau = document.getElementById('mau').files[0];
+    if (!anh) { show(LOI.missing_files); return; }
     if (!yeucau && !mau) { show(LOI.need_request); return; }
     const fd = new FormData();
-    fd.append('name', document.getElementById('ten').value.trim());
-    fd.append('phone', document.getElementById('sdt').value.trim());
     fd.append('request', yeucau);
-    fd.append('consent', document.getElementById('dongy').checked ? '1' : '0');
-    fd.append('photo', document.getElementById('anh').files[0]);
+    fd.append('photo', anh);
     if (mau) fd.append('style', mau);
 
     const tien = el('progress', { max: '100', value: '0', style: 'width:100%' });

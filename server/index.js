@@ -287,7 +287,6 @@ app.post(
       const request = oneLine(req.body.request, 500);
       // Cần ít nhất một trong hai: yêu cầu chữ hoặc ảnh phong cách.
       if (!request && !style) return res.status(400).json({ error: 'need_request' });
-      if (req.body.consent !== '1') return res.status(400).json({ error: 'need_consent' });
 
       const code = 'DON-' + crypto.randomBytes(8).toString('hex');
       const folder = await drv.files.create({

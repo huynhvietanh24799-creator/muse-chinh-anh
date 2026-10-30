@@ -148,16 +148,17 @@ test('chỉ có yêu cầu chữ (không ảnh mẫu) vẫn nhận; không có g
   });
 });
 
-test('từ chối: thiếu ảnh, thiếu đồng ý, sai loại file, mã sai', async () => {
+test('từ chối: thiếu ảnh, sai loại file, mã sai; không cần tên/số điện thoại/xác nhận', async () => {
   __setDrive(makeDrive([{ id: 'ROOT', name: 'x', mime: 'application/vnd.google-apps.folder' }]));
   await withServer(async (base) => {
     const post = (fd) => fetch(`${base}/api/orders`, { method: 'POST', body: fd }).then(async (r) => [r.status, (await r.json()).error]);
     assert.deepStrictEqual(await post(new FormData()), [400, 'missing_files']);
 
-    const noConsent = new FormData();
-    noConsent.append('photo', jpg(), 'a.jpg');
-    noConsent.append('request', 'sáng hơn');
-    assert.deepStrictEqual(await post(noConsent), [400, 'need_consent']);
+    // không cần tên, số điện thoại hay ô xác nhận
+    const plain = new FormData();
+    plain.append('photo', jpg(), 'a.jpg');
+    plain.append('request', 'sáng hơn');
+    assert.strictEqual((await fetch(`${base}/api/orders`, { method: 'POST', body: plain })).status, 200);
 
     const bad = new FormData();
     bad.append('photo', new Blob(['x'], { type: 'text/plain' }), 'a.txt');
