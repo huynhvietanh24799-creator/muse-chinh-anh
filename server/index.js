@@ -38,10 +38,20 @@ const CODE_RE = /^DON-[a-f0-9]{16}$/;
 
 const MAX_IMAGE = 20 * 1024 * 1024; // mỗi ảnh (ảnh chính và ảnh phong cách)
 const IMAGE_TYPES = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' };
-const RESULT_RE = /^ket-qua\.(jpe?g|png|webp)$/i;
+// Ảnh kết quả = bất kỳ file ảnh nào trong thư mục đơn KHÔNG phải ảnh khách gửi (anh.*, anh-mau.*),
+// tên gì cũng được; nếu có file tên ket-qua.* thì ưu tiên nó, còn không lấy ảnh mới nhất.
+const IMAGE_EXT_RE = /\.(jpe?g|png|webp)$/i;
+const INPUT_NAME_RE = /^(anh|anh-mau)\./i;
+// Ảnh mới thả vào phải "yên" ít giây rồi mới tính là xong (tránh trả ảnh còn đang tải dở),
+// trừ khi bên làm ảnh đã tạo xong.txt.
+const SETTLE_MS = (Number(process.env.RESULT_SETTLE_SECONDS) || 10) * 1000;
 const RESULT_MIME = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp' };
 const ORDER_LIMIT = Number(process.env.ORDER_LIMIT_PER_HOUR) || 5;
-const resultFile = (files) => files.find((f) => RESULT_RE.test(f.name)) || null;
+const resultFile = (files) => {
+  const imgs = files.filter((f) => IMAGE_EXT_RE.test(f.name) && !INPUT_NAME_RE.test(f.name));
+  imgs.sort((a, b) => (/^ket-qua\./i.test(b.name) - /^ket-qua\./i.test(a.name)) || Date.parse(b.createdTime) - Date.parse(a.createdTime));
+  return imgs[0] || null;
+};
 
 const FOLDER_MIME = 'application/vnd.google-apps.folder';
 
@@ -102,11 +112,13 @@ async function findOrderFolder(drv, code) {
 function describe(files, folderCreatedTime) {
   const by = Object.fromEntries(files.map((f) => [f.name, f]));
   let status = 'processing';
-  // Xong = có xong.txt VÀ có ảnh kết quả (phòng khi xong.txt đến trước do đồng bộ chậm).
-  if (by['xong.txt'] && resultFile(files)) status = 'done';
+  // Xong = có ảnh kết quả, và (có xong.txt, hoặc ảnh đã nằm yên đủ SETTLE_MS).
+  // Có xong.txt mà chưa có ảnh (đồng bộ chậm) thì chưa tính là xong.
+  const res = resultFile(files);
+  if (res && (by['xong.txt'] || Date.now() - Date.parse(res.createdTime) >= SETTLE_MS)) status = 'done';
   else if (by['tu-choi.txt']) status = 'rejected';
   else if (REQUIRE_APPROVAL && !by['da-duyet.txt']) status = 'pending';
-  const base = status === 'done' ? by['xong.txt'].createdTime
+  const base = status === 'done' ? (by['xong.txt'] || res).createdTime
     : status === 'rejected' ? by['tu-choi.txt'].createdTime
     : folderCreatedTime;
   const expiresAt = new Date(Date.parse(base) + RETENTION_MS).toISOString();

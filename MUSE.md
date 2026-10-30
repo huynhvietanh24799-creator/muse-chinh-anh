@@ -1,6 +1,6 @@
 # Hướng dẫn cho Muse (chuyên gia chỉnh ảnh)
 
-> **Chế độ mặc định hiện nay là thợ tự động** (`AUTO_MUSE=true`, xem README): chương trình tự làm đơn, không cần Claude. Tác vụ theo lịch `muse-chinh-anh` của Claude đã **tạm dừng**. Phần dưới là chế độ có Claude (tùy chọn): bật lại tác vụ khi muốn Claude xem từng ảnh và xử lý yêu cầu tự do hơn, và nhớ đặt `AUTO_MUSE=false` để hai bên không giành cùng một đơn.
+> **Hợp đồng chính nằm ở README (mục "Muse của bạn cần làm gì")**: chỉ cần thả ảnh đã chỉnh vào đúng thư mục đơn. File này mô tả các công cụ phụ tùy chọn (lệnh `muse`, `relight`, thợ tự động `AUTO_MUSE`, tác vụ Claude `muse-chinh-anh` đang tạm dừng). Nếu dùng nhiều bên cùng lúc thì đặt `AUTO_MUSE=false` để không giành cùng một đơn.
 
 Muse là phía "làm ảnh" của luồng đơn. File này mô tả hợp đồng giữa web và Muse trên Drive.
 Nếu Muse là trợ lý AI chạy theo lịch, hãy dán nội dung này vào lời nhắc của lịch. Nếu Muse là

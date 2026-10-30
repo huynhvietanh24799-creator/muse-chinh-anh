@@ -1,11 +1,28 @@
-# Muse Chỉnh ảnh — gửi ảnh, nhận ảnh đã chỉnh (miễn phí, file tự xóa sau 2 ngày)
+# Muse Chỉnh ảnh — web nhận ảnh, giao ảnh đã chỉnh (miễn phí, file tự xóa sau 2 ngày)
 
-Khách vào trang, gửi **ảnh cần chỉnh** kèm **yêu cầu bằng chữ** và/hoặc **ảnh phong cách muốn giống** →
-file vào thư mục **Đơn chỉnh ảnh AI** trên Google Drive của bạn, theo mã đơn →
-Muse (chuyên gia chỉnh ảnh) lấy xuống, chỉnh, tải ảnh kết quả lên lại →
-trang web hiện ảnh và nút tải cho khách → **cả thư mục tự bị xóa vĩnh viễn sau 48 giờ**.
+Web chỉ làm **người giao hàng**, không tự chỉnh ảnh:
 
-Toàn bộ chạy miễn phí: Drive (Gmail 15GB), Render gói miễn phí, dịch vụ ping miễn phí. Trang được làm ưu tiên điện thoại.
+1. Khách vào trang, gửi **ảnh cần chỉnh** kèm **yêu cầu bằng chữ** và/hoặc **ảnh phong cách muốn giống**.
+2. Web đưa vào thư mục **Đơn chỉnh ảnh AI** trên Google Drive của bạn, mỗi đơn một thư mục `DON-<mã ngẫu nhiên>`.
+3. **Muse của bạn (bên ngoài)** lấy ảnh xuống, chỉnh xong, thả ảnh đã chỉnh vào **đúng thư mục đơn đó**.
+4. Web thấy ảnh mới, hiện ảnh và nút tải cho **đúng khách có mã đơn đó**.
+5. **Cả thư mục tự bị xóa vĩnh viễn sau 48 giờ.**
+
+Toàn bộ chạy miễn phí: Drive, Render gói miễn phí, dịch vụ ping miễn phí. Trang làm ưu tiên điện thoại.
+
+## Muse của bạn cần làm gì (hợp đồng duy nhất)
+
+Trong mỗi thư mục `DON-…` có:
+
+| File | Ý nghĩa |
+|---|---|
+| `anh.jpg` / `anh.png` / `anh.webp` | Ảnh khách cần chỉnh |
+| `anh-mau.*` | (có thể không có) ảnh phong cách khách muốn giống |
+| `yeu-cau.txt` | Yêu cầu chữ, tên và số Zalo của khách. **Được tải lên cuối cùng**: thấy file này nghĩa là ảnh đã đủ, Muse nên bắt đầu |
+
+Muse chỉ cần **thả ảnh đã chỉnh vào cùng thư mục đó**, định dạng JPG, PNG hoặc WEBP, **tên gì cũng được** (nếu đặt `ket-qua.jpg` thì được ưu tiên). Web tự nhận ra đó là ảnh kết quả vì nó không phải `anh.*` hay `anh-mau.*`. Ảnh cần nằm yên khoảng 10 giây rồi web mới giao (tránh giao ảnh còn đang tải); muốn giao ngay thì tạo thêm một file `xong.txt` rỗng sau khi ảnh đã tải xong. Muốn từ chối đơn thì tạo `tu-choi.txt`: khách sẽ thấy "chưa thể thực hiện".
+
+Mã đơn là thư mục: Muse **không cần biết khách là ai**, chỉ cần ảnh về đúng thư mục thì web giao đúng người.
 
 ## Xem thử ngay, không cần tài khoản Google
 
@@ -18,7 +35,7 @@ Gửi một đơn trên trang: thợ tự động chỉnh ánh sáng thật cho 
 
 ## Đặc điểm
 
-- **Chạy độc lập, không cần Claude hay máy bạn bật.** Với `AUTO_MUSE=true`, máy chủ web có sẵn một "thợ tự động": khách gửi đơn xong là thợ tự đọc yêu cầu, chỉnh ánh sáng, nộp ảnh và báo xong, thường trong khoảng nửa phút. Thợ đọc yêu cầu bằng bộ luật tiếng Việt (sáng/tối, ấm/lạnh, ánh sáng từ trái/phải/trên/dưới, ngược sáng, điện ảnh, đen trắng, tối viền) và dùng ảnh phong cách nếu có; không dùng AI nên không tốn lượt, và không làm theo bất kỳ câu "ra lệnh" nào trong yêu cầu.
+- **Thợ tự động có sẵn (tùy chọn, mặc định tắt).** Nếu bạn chưa có Muse riêng, đặt `AUTO_MUSE=true` để máy chủ web có sẵn một "thợ tự động": khách gửi đơn xong là thợ tự đọc yêu cầu, chỉnh ánh sáng, nộp ảnh và báo xong, thường trong khoảng nửa phút. Thợ đọc yêu cầu bằng bộ luật tiếng Việt (sáng/tối, ấm/lạnh, ánh sáng từ trái/phải/trên/dưới, ngược sáng, điện ảnh, đen trắng, tối viền) và dùng ảnh phong cách nếu có; không dùng AI nên không tốn lượt, và không làm theo bất kỳ câu "ra lệnh" nào trong yêu cầu.
 
 - **Chỉ chỉnh ánh sáng**: trang, lời nhắc Muse và chính sách đều theo hướng này.
 - **Cài như ứng dụng**: trên Android bấm "Thêm vào màn hình chính" ngay trên trang; iPhone bấm Chia sẻ → Thêm vào MH chính (trang có hướng dẫn). Mở bằng một chạm, không thanh địa chỉ.
@@ -83,7 +100,7 @@ Gói miễn phí của Render có 750 giờ chạy mỗi tháng, vừa đủ cho
 ## Bước 6 — Kiểm tra bằng đơn thật
 
 1. Gửi một đơn trên web (ảnh + ảnh phong cách + yêu cầu). Drive phải có `Đơn chỉnh ảnh AI/DON-.../` với `anh.*`, `anh-mau.*`, `yeu-cau.txt`.
-2. Với `AUTO_MUSE=true`, thợ tự động làm đơn trong khoảng nửa phút: trang web tự hiện ảnh đã chỉnh và nút tải; ảnh gốc, ảnh mẫu và số điện thoại biến mất khỏi thư mục đơn. Trong thư mục Drive gốc có thêm file `ZALO-DON-….txt` (tên, số Zalo, link) để bạn nhắn khách; file này tự xóa sau 2 ngày.
+2. Muse của bạn thả ảnh đã chỉnh vào thư mục đơn: trang web tự hiện ảnh và nút tải; ảnh gốc, ảnh mẫu và số điện thoại biến mất khỏi thư mục đơn. (Muốn thử mà chưa có Muse thì đặt `AUTO_MUSE=true`: thợ tự động có sẵn sẽ làm trong khoảng nửa phút.) Trong thư mục Drive gốc có thêm file `ZALO-DON-….txt` (tên, số Zalo, link) để bạn nhắn khách; file này tự xóa sau 2 ngày.
 3. Muốn thử xóa nhanh: đặt `RETENTION_HOURS=0.01` trên Render, tạo đơn, gọi link `/api/cleanup`, xong nhớ trả về `48`.
 
 ## Điền thông tin thật

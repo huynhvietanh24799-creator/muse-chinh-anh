@@ -99,6 +99,34 @@ test('xong.txt đến trước ảnh kết quả thì chưa tính là xong; bị
   assert.ok(drive.store.some((f) => f.id === 'b1'));
 });
 
+test('ảnh kết quả tên gì cũng được: ảnh nằm yên thì xong, không cần xong.txt; ảnh khách gửi không bị nhầm là kết quả', async () => {
+  const dir = 'application/vnd.google-apps.folder';
+  const f = (id, name, parent, secAgo, content = '') => ({ id, name, parents: parent ? [parent] : [], mime: name.startsWith('DON-') ? dir : '', createdTime: new Date(Date.now() - secAgo * 1000).toISOString(), content: Buffer.from(content) });
+  const drive = makeDrive([
+    { id: 'ROOT', name: 'Đơn chỉnh ảnh AI', mime: dir },
+    // 1) chỉ có ảnh khách gửi -> đang xử lý
+    f('a', 'DON-aaaaaaaaaaaaaaaa', 'ROOT', 300), f('a1', 'anh.jpg', 'a', 300), f('a2', 'anh-mau.png', 'a', 300), f('a3', 'yeu-cau.txt', 'a', 300),
+    // 2) ảnh lạ tên vừa thả vào 2 giây trước, chưa có xong.txt -> chưa tính là xong (có thể còn đang tải)
+    f('b', 'DON-bbbbbbbbbbbbbbbb', 'ROOT', 300), f('b1', 'anh.jpg', 'b', 300), f('b2', 'DaChinh.jpg', 'b', 2, 'DANG-TAI'),
+    // 3) ảnh tên lạ nằm yên 60 giây, không có xong.txt -> xong
+    f('c', 'DON-cccccccccccccccc', 'ROOT', 300), f('c1', 'anh.jpg', 'c', 300), f('c2', 'Ban_Cuoi_FINAL.PNG', 'c', 60, 'BYTES-PNG'),
+    // 4) ảnh vừa thả nhưng đã có xong.txt -> xong ngay
+    f('d', 'DON-dddddddddddddddd', 'ROOT', 300), f('d1', 'chinh-sua.webp', 'd', 1, 'WEBP'), f('d2', 'xong.txt', 'd', 1),
+  ]);
+  __setDrive(drive);
+  await withServer(async (base) => {
+    const st = async (c) => (await fetch(`${base}/api/orders/${c}/status`)).json();
+    assert.strictEqual((await st('DON-aaaaaaaaaaaaaaaa')).status, 'processing');
+    assert.strictEqual((await st('DON-bbbbbbbbbbbbbbbb')).status, 'processing');
+    assert.strictEqual((await st('DON-cccccccccccccccc')).status, 'done');
+    assert.strictEqual((await st('DON-dddddddddddddddd')).status, 'done');
+    const dl = await fetch(`${base}/api/orders/DON-cccccccccccccccc/download`);
+    assert.strictEqual(dl.headers.get('content-type'), 'image/png');
+    assert.strictEqual(await dl.text(), 'BYTES-PNG');
+    assert.strictEqual((await fetch(`${base}/api/orders/DON-bbbbbbbbbbbbbbbb/download`)).status, 404);
+  });
+});
+
 test('chỉ có yêu cầu chữ (không ảnh mẫu) vẫn nhận; không có gì thì từ chối', async () => {
   const drive = makeDrive([{ id: 'ROOT', name: 'Đơn chỉnh ảnh AI', mime: 'application/vnd.google-apps.folder' }]);
   __setDrive(drive);

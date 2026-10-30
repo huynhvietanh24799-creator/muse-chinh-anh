@@ -13,7 +13,7 @@ services:
       - key: REQUIRE_APPROVAL
         value: "false"
       - key: AUTO_MUSE
-        value: "true"
+        value: "false"
       - key: RELIGHT_MAX_EDGE
         value: "3000"
       - key: SITE_URL
