@@ -1,0 +1,27 @@
+{
+  "name": "Muse - Chỉnh ánh sáng cho ảnh",
+  "short_name": "Muse",
+  "description": "Gửi ảnh, nhận ảnh đã chỉnh ánh sáng ngay trên điện thoại.",
+  "lang": "vi",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#14122b",
+  "theme_color": "#14122b",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

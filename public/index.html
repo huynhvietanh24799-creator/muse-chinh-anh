@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14122b">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Muse">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Muse — chỉnh ánh sáng cho ảnh</title>
+<meta name="description" content="Gửi ảnh và yêu cầu về ánh sáng, Muse chỉnh xong và trả ảnh ngay trên trang này. Thêm vào màn hình chính để mở bằng một chạm.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ffd166'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23231a00'/%3E%3C/svg%3E">
+<style>
+  [hidden] { display: none !important; }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #fff; min-height: 100vh;
+    background: #14122b linear-gradient(160deg, #0f0c29 0%, #302b63 55%, #24243e 100%) fixed;
+  }
+  a { color: #ffd166; }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 5vw; }
+  .logo { font-size: 20px; font-weight: 800; }
+  .logo span { color: #ffd166; }
+  nav { display: flex; gap: 16px; }
+  nav a { color: #fff; text-decoration: none; font-size: 15px; opacity: .9; padding: 8px 0; }
+  main { padding: 0 5vw 50px; max-width: 1000px; margin: 0 auto; }
+  .hero { text-align: center; padding: 34px 0 22px; }
+  .hero h1 { font-size: clamp(28px, 6vw, 46px); line-height: 1.2; }
+  .hero h1 span { color: #ffd166; }
+  .hero p { margin: 14px auto 22px; font-size: 17px; opacity: .9; max-width: 620px; line-height: 1.6; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 12px 24px; border-radius: 999px;
+    font-weight: 700; font-size: 16px; text-decoration: none; cursor: pointer; border: 1.5px solid transparent; font-family: inherit; touch-action: manipulation;
+  }
+  .btn-gold { background: #ffd166; color: #231a00; }
+  .btn-ghost { background: transparent; color: #fff; border-color: rgba(255,255,255,.6); }
+  .btn[disabled] { opacity: .6; cursor: wait; }
+  .btn:focus-visible, input:focus-visible, textarea:focus-visible, a:focus-visible { outline: 3px solid #8ab4ff; outline-offset: 2px; }
+  .zalo-card { margin: 26px auto 0; max-width: 560px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 16px; padding: 16px 20px; text-align: left; font-size: 14.5px; line-height: 1.55; }
+  .zalo-card b.t { display: block; margin-bottom: 4px; }
+  section { margin-top: 48px; }
+  h2 { font-size: 24px; margin-bottom: 8px; }
+  .sub { opacity: .85; margin-bottom: 18px; line-height: 1.6; }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .step { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.13); border-radius: 16px; padding: 20px; }
+  .step .num { width: 36px; height: 36px; border-radius: 50%; background: #ffd166; color: #231a00; display: flex; align-items: center; justify-content: center; font-weight: 800; margin-bottom: 10px; }
+  .step h3 { margin-bottom: 6px; font-size: 18px; }
+  .step p { font-size: 15px; opacity: .85; line-height: 1.55; }
+  .price { background: rgba(255,209,102,.12); border: 1px solid rgba(255,209,102,.4); border-radius: 16px; padding: 18px 20px; font-size: 17px; line-height: 1.6; }
+  form { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.13); border-radius: 16px; padding: 20px; display: grid; gap: 16px; max-width: 640px; }
+  label { font-weight: 600; font-size: 15px; display: grid; gap: 6px; }
+  label small { font-weight: 400; opacity: .75; line-height: 1.4; }
+  input[type="text"], input[type="tel"], textarea {
+    padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,.25); background: rgba(0,0,0,.25); color: #fff;
+    font-size: 16px; /* 16px để iPhone không tự phóng to khi chạm vào ô nhập */ width: 100%; font-family: inherit;
+  }
+  input[type="file"] { font-size: 16px; max-width: 100%; }
+  .thumb { max-width: 100%; max-height: 180px; border-radius: 10px; border: 1px solid rgba(255,255,255,.2); justify-self: start; }
+  label.check { display: flex; gap: 10px; align-items: flex-start; font-weight: 400; font-size: 14px; line-height: 1.5; }
+  label.check input { margin-top: 3px; width: 20px; height: 20px; flex: none; accent-color: #ffd166; }
+  .row2 { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: end; }
+  #ketqua { display: none; background: rgba(255,209,102,.12); border: 1px solid rgba(255,209,102,.4); border-radius: 16px; padding: 18px 20px; line-height: 1.7; max-width: 640px; margin-top: 16px; }
+  #ketqua code { background: rgba(0,0,0,.35); padding: 2px 8px; border-radius: 6px; font-size: 16px; word-break: break-all; }
+  #ketqua img { display: block; max-width: 100%; max-height: 60vh; border-radius: 12px; margin: 10px 0; }
+  #ketqua small { opacity: .8; }
+  footer { padding: 26px 5vw 40px; border-top: 1px solid rgba(255,255,255,.15); font-size: 14.5px; opacity: .85; line-height: 1.8; }
+  footer h3 { color: #fff; margin-bottom: 6px; }
+  @media (max-width: 720px) {
+    .steps { grid-template-columns: 1fr; }
+    .row2 { grid-template-columns: 1fr; }
+    nav a:nth-child(2) { display: none; }
+    .hero { padding-top: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Muse <span>Ánh sáng</span></div>
+  <nav>
+    <a href="#dat-hang">Gửi ảnh</a>
+    <a href="#cach-hoat-dong">Cách hoạt động</a>
+    <a href="#tra-cuu">Tra cứu</a>
+  </nav>
+</header>
+
+<main>
+  <div class="hero">
+    <h1>Ảnh của bạn, <span>ánh sáng đẹp như ý</span></h1>
+    <p>Gửi ảnh cần chỉnh, kèm yêu cầu về ánh sáng (sáng hơn, ấm hơn, ánh sáng từ bên trái...) hoặc một ảnh có ánh sáng bạn thích. Muse chỉnh và trả kết quả ngay trên trang này.</p>
+    <a class="btn btn-gold" href="#dat-hang">Gửi ảnh ngay</a>
+    <button class="btn btn-ghost" type="button" id="btn-cai" hidden style="margin-top:10px">📲 Thêm vào màn hình chính</button>
+
+    <div class="zalo-card">
+      <b class="t">Cần hỗ trợ? Nhắn Zalo cho mình</b>
+      <!-- TODO: thay số điện thoại và email thật của bạn -->
+      SĐT/Zalo: <b>0000 000 000</b> &nbsp;•&nbsp; Email: <b>ban@email.com</b><br>
+      Giờ hỗ trợ: 8h00 – 22h00 hằng ngày. Khi cần hỗ trợ, bạn nhắn kèm mã đơn nhé.
+    </div>
+  </div>
+
+  <section id="cach-hoat-dong">
+    <h2>Cách hoạt động</h2>
+    <p class="sub">Ba bước, không cần cài đặt gì.</p>
+    <div class="steps">
+      <div class="step"><div class="num">1</div><h3>Gửi ảnh và yêu cầu</h3><p>Tải ảnh cần chỉnh, rồi gõ yêu cầu về ánh sáng hoặc chọn thêm một ảnh có ánh sáng bạn thích.</p></div>
+      <div class="step"><div class="num">2</div><h3>Muse chỉnh ánh sáng</h3><p>Muse xem ảnh và yêu cầu rồi chỉnh ánh sáng cho ảnh theo ý bạn, giữ nguyên người và bối cảnh.</p></div>
+      <div class="step"><div class="num">3</div><h3>Nhận ảnh</h3><p>Ảnh xong hiện ngay trên trang để xem và tải về. Ảnh được giữ 2 ngày rồi tự động xóa.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="price">
+      <!-- TODO: điền giá thật của bạn -->
+      <b>Giá: ___/ảnh</b><br>
+      <span style="font-size:15px; opacity:.85;">Mỗi đơn gồm 1 ảnh. Bạn sẽ được báo giá trước khi Muse bắt đầu làm.</span>
+    </div>
+  </section>
+
+  <section id="dat-hang">
+    <h2>Gửi ảnh cần chỉnh</h2>
+    <p class="sub">Điền thông tin và chọn ảnh. Cần ít nhất <b>một</b> trong hai: yêu cầu về ánh sáng bằng chữ hoặc ảnh có ánh sáng bạn thích. Gửi xong bạn nhận mã đơn — hãy lưu lại để xem và tải ảnh khi xong.</p>
+    <form id="form-don">
+      <label>Ảnh cần chỉnh <small>JPG, PNG hoặc WEBP, tối đa 20MB.</small>
+        <input type="file" id="anh" accept="image/jpeg,image/png,image/webp" required>
+        <img class="thumb" id="th-anh" alt="Ảnh bạn chọn" hidden>
+      </label>
+      <label>Ảnh có ánh sáng muốn giống <small>Không bắt buộc. Một ảnh có ánh sáng, tông màu bạn thích.</small>
+        <input type="file" id="mau" accept="image/jpeg,image/png,image/webp">
+        <img class="thumb" id="th-mau" alt="Ảnh phong cách bạn chọn" hidden>
+      </label>
+      <label>Yêu cầu về ánh sáng <small>Ví dụ: sáng hơn, ánh sáng chiếu từ bên trái, ấm hơn, cứu vùng tối do ngược sáng. Viết ngắn, rõ từng ý.</small>
+        <textarea id="yeucau" rows="3" maxlength="500" placeholder="Bạn muốn ánh sáng thế nào?"></textarea>
+      </label>
+      <label>Tên của bạn
+        <input type="text" id="ten" required maxlength="80" placeholder="Ví dụ: Anh Tuấn" autocomplete="name">
+      </label>
+      <label>Số điện thoại / Zalo
+        <input type="tel" id="sdt" required maxlength="20" placeholder="Để liên hệ khi cần" autocomplete="tel">
+      </label>
+      <label class="check">
+        <input type="checkbox" id="dongy" required>
+        <span>Tôi xác nhận ảnh là của tôi, hoặc tôi đã được người trong ảnh đồng ý cho chỉnh sửa. Tôi hiểu ảnh sẽ tự động xóa sau 2 ngày.</span>
+      </label>
+      <div><button class="btn btn-gold" type="submit" id="nut-gui">Gửi yêu cầu</button></div>
+    </form>
+
+    <h3 id="tra-cuu" style="margin-top:34px; margin-bottom:10px;">Đã có mã đơn? Xem và tải ảnh</h3>
+    <form id="form-tracuu" class="row2">
+      <label>Mã đơn
+        <input type="text" id="ma-don" placeholder="DON-0123456789abcdef" autocomplete="off" maxlength="40">
+      </label>
+      <button class="btn btn-gold" type="submit">Tra cứu</button>
+    </form>
+    <div id="ketqua" role="status" aria-live="polite"></div>
+  </section>
+
+  <section id="chinh-sach">
+    <h2>Chính sách</h2>
+    <p class="sub">
+      <!-- TODO: viết chính sách thật của bạn: thời gian trả ảnh, số lần chỉnh lại, hoàn tiền. -->
+      1. Muse chỉ chỉnh <b>ánh sáng</b> (và tông màu đi kèm) theo yêu cầu và ảnh bạn gửi; không đổi khuôn mặt, nền hay xóa vật thể. Bạn chỉ gửi ảnh của chính mình hoặc ảnh đã được người trong ảnh đồng ý, và chịu trách nhiệm về quyền sử dụng ảnh. Chúng mình có quyền từ chối đơn có nội dung vi phạm.<br>
+      2. Thời gian trả ảnh thông thường trong ngày làm việc, tùy số lượng đơn.<br>
+      3. Nếu kết quả chưa đúng ý, bạn được chỉnh lại theo thỏa thuận.<br>
+      4. Quyền riêng tư: ảnh gốc, ảnh phong cách và số điện thoại chỉ dùng cho đơn này và bị xóa ngay khi ảnh kết quả xong. Ảnh kết quả được giữ 2 ngày kể từ lúc xong rồi tự động xóa vĩnh viễn. Hãy tải ảnh về sớm.
+    </p>
+  </section>
+</main>
+
+<footer>
+  <h3>Muse — chỉnh ánh sáng cho ảnh</h3>
+  <!-- TODO: thay thông tin liên hệ thật của bạn -->
+  SĐT/Zalo: 0000 000 000 &nbsp;•&nbsp; Email: ban@email.com<br>
+  Ảnh bạn gửi và ảnh thành phẩm được tự động xóa sau 2 ngày.
+</footer>
+
+<script>
+(function () {
+  // Nếu trang chạy cùng backend (Render) thì để trống.
+  // Nếu trang đặt ở nơi khác (GitHub Pages...) thì dán link Render vào đây, ví dụ:
+  // const BACKEND_URL = 'https://ten-cua-ban.onrender.com';
+  const BACKEND_URL = '';
+  const api = (p) => (BACKEND_URL ? BACKEND_URL + p : p);
+  const STORE_KEY = 'muse-don-gan-nhat';
+  const POLL_MS = 20000;
+  const CODE_RE = /^DON-[a-f0-9]{16}$/;
+  const MAX_IMG = 20 * 1024 * 1024;
+
+  const box = document.getElementById('ketqua');
+  let timer = null;
+
+  // Dựng bằng DOM (textContent) để chữ khách nhập không chạy được như HTML.
+  function el(tag, attrs, ...kids) {
+    const e = document.createElement(tag);
+    for (const k in attrs || {}) e.setAttribute(k, attrs[k]);
+    e.append(...kids);
+    return e;
+  }
+  function show(...nodes) {
+    box.style.display = 'block';
+    box.replaceChildren(...nodes);
+    box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  const code = (c) => el('code', {}, c);
+  const linkDon = (c) => location.origin + location.pathname + '?don=' + c;
+  // Nút sao chép link theo dõi: khách lưu hoặc gửi qua Zalo, bấm vào là thấy đúng đơn.
+  function nutSaoChep(c) {
+    const b = el('button', { class: 'btn btn-ghost', type: 'button', style: 'margin-top:8px' }, 'Sao chép link theo dõi');
+    b.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(linkDon(c)); b.textContent = 'Đã sao chép ✓'; }
+      catch (e) { window.prompt('Sao chép link này:', linkDon(c)); }
+    });
+    return b;
+  }
+  const br = () => el('br');
+  const remember = (c) => { try { localStorage.setItem(STORE_KEY, c); } catch (e) {} };
+  const forget = () => { try { localStorage.removeItem(STORE_KEY); } catch (e) {} };
+  const recall = () => { try { return localStorage.getItem(STORE_KEY) || ''; } catch (e) { return ''; } };
+  const fmt = (iso) => new Date(iso).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' });
+
+  function luongZalo() {
+    show('Hệ thống chưa nhận ảnh tự động được lúc này. Bạn vui lòng nhắn Zalo ', el('b', {}, '0000 000 000'), ' kèm ảnh và yêu cầu để được hỗ trợ.');
+  }
+  function stopPolling() { if (timer) { clearInterval(timer); timer = null; } }
+
+  function theoDoi(maDon) {
+    stopPolling();
+    remember(maDon);
+    document.getElementById('ma-don').value = maDon;
+    let daXong = false;
+    const kiemTra = () => {
+      fetch(api('/api/orders/' + maDon + '/status'), { cache: 'no-store' })
+        .then((r) => r.json().then((d) => ({ status: r.status, d })))
+        .then(({ status, d }) => {
+          if (status === 404) {
+            stopPolling(); forget();
+            show('Không tìm thấy đơn ', code(maDon), br(), 'Có thể mã bị sai, hoặc đơn đã hết hạn (đơn và ảnh được tự động xóa sau 2 ngày).');
+          } else if (d.status === 'done') {
+            stopPolling();
+            if (daXong) return;
+            daXong = true;
+            const preview = el('img', { alt: 'Ảnh đã chỉnh', src: api('/api/orders/' + maDon + '/download?inline=1') });
+            show('Ảnh của bạn đã xong! Mã đơn ', code(maDon), preview,
+              el('a', { class: 'btn btn-gold', href: api('/api/orders/' + maDon + '/download') }, 'Tải ảnh xuống'), br(),
+              el('small', {}, 'Ảnh sẽ tự động bị xóa lúc ' + fmt(d.expiresAt) + ' — hãy tải về trước thời điểm này.'));
+          } else if (d.status === 'rejected') {
+            stopPolling();
+            show('Rất tiếc, đơn ', code(maDon), ' chưa thể thực hiện (ảnh hoặc yêu cầu chưa phù hợp).', br(),
+              'Bạn nhắn Zalo ', el('b', {}, '0000 000 000'), ' kèm mã đơn để được hỗ trợ.');
+          } else if (d.status === 'pending') {
+            show('Đơn ', code(maDon), ' đã được nhận và đang chờ duyệt.', br(), 'Bạn có thể đóng trang, quay lại sau và nhập mã đơn ở mục "Xem và tải ảnh".');
+          } else if (d.status === 'processing') {
+            show('Đơn ', code(maDon), ' đang được Muse chỉnh.', br(),
+              'Bạn có thể đóng trang, quay lại sau bằng link theo dõi hoặc mã đơn. Hãy lưu lại.', br(),
+              nutSaoChep(maDon), br(),
+              el('small', {}, 'Đơn sẽ tự động bị xóa lúc ' + fmt(d.expiresAt) + '.'));
+          }
+        })
+        .catch(() => { /* lần sau thử lại */ });
+    };
+    kiemTra();
+    timer = setInterval(kiemTra, POLL_MS);
+  }
+
+  const LOI = {
+    file_too_large: 'Ảnh quá lớn. Mỗi ảnh tối đa 20MB.',
+    photo_too_large: 'Ảnh quá lớn. Mỗi ảnh tối đa 20MB.',
+    bad_type: 'Loại file không được hỗ trợ. Chỉ nhận ảnh JPG, PNG, WEBP.',
+    missing_files: 'Bạn cần chọn ảnh cần chỉnh.',
+    need_request: 'Hãy gõ yêu cầu hoặc chọn một ảnh phong cách để Muse biết bạn muốn gì.',
+    need_consent: 'Bạn cần tích vào ô xác nhận quyền sử dụng ảnh.',
+    too_many_requests: 'Bạn gửi quá nhiều lần. Vui lòng thử lại sau ít phút.',
+  };
+
+  // Hiện ảnh xem trước ngay khi chọn file; ảnh quá lớn thì báo luôn.
+  function preview(inputId, imgId) {
+    const input = document.getElementById(inputId), img = document.getElementById(imgId);
+    input.addEventListener('change', () => {
+      if (img.src) { URL.revokeObjectURL(img.src); img.removeAttribute('src'); }
+      img.hidden = true;
+      const f = input.files[0];
+      if (!f) return;
+      if (f.size > MAX_IMG) { input.value = ''; show(LOI.file_too_large); return; }
+      img.src = URL.createObjectURL(f);
+      img.hidden = false;
+    });
+  }
+  preview('anh', 'th-anh');
+  preview('mau', 'th-mau');
+
+  const form = document.getElementById('form-don');
+  const nut = document.getElementById('nut-gui');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    const yeucau = document.getElementById('yeucau').value.trim();
+    const mau = document.getElementById('mau').files[0];
+    if (!yeucau && !mau) { show(LOI.need_request); return; }
+    const fd = new FormData();
+    fd.append('name', document.getElementById('ten').value.trim());
+    fd.append('phone', document.getElementById('sdt').value.trim());
+    fd.append('request', yeucau);
+    fd.append('consent', document.getElementById('dongy').checked ? '1' : '0');
+    fd.append('photo', document.getElementById('anh').files[0]);
+    if (mau) fd.append('style', mau);
+
+    const tien = el('progress', { max: '100', value: '0', style: 'width:100%' });
+    show('Đang tải ảnh lên, vui lòng đừng đóng trang...', br(), tien);
+    nut.disabled = true;
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', api('/api/orders'));
+    xhr.upload.onprogress = (ev) => { if (ev.lengthComputable) tien.value = Math.round((ev.loaded / ev.total) * 100); };
+    xhr.onload = function () {
+      nut.disabled = false;
+      let d = {};
+      try { d = JSON.parse(xhr.responseText); } catch (err) {}
+      if (xhr.status === 200 && CODE_RE.test(d.orderCode || '')) {
+        remember(d.orderCode);
+        show('Đã nhận yêu cầu! Mã đơn của bạn là ', code(d.orderCode), br(), 'Hãy lưu link theo dõi này để xem và tải ảnh khi xong.', br(), nutSaoChep(d.orderCode));
+        setTimeout(() => theoDoi(d.orderCode), 1500);
+      } else if (xhr.status === 503) {
+        luongZalo();
+      } else {
+        show(LOI[d.error] || 'Gửi không thành công. Bạn thử lại hoặc nhắn Zalo giúp mình nhé.');
+      }
+    };
+    xhr.onerror = function () { nut.disabled = false; luongZalo(); };
+    xhr.send(fd);
+  });
+
+  document.getElementById('form-tracuu').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const c = document.getElementById('ma-don').value.trim().toLowerCase().replace(/^don-?/, 'DON-');
+    if (!CODE_RE.test(c)) { show('Mã đơn chưa đúng. Mã có dạng ', code('DON-0123456789abcdef'), '.'); return; }
+    theoDoi(c);
+  });
+
+  // Mở bằng link ?don=<mã> thì theo dõi đúng đơn đó; không thì lấy đơn gần nhất đã lưu.
+  const tuLink = new URLSearchParams(location.search).get('don') || '';
+  const daLuu = CODE_RE.test(tuLink) ? tuLink : recall();
+  if (CODE_RE.test(daLuu)) {
+    document.getElementById('ma-don').value = daLuu;
+    theoDoi(daLuu);
+  }
+
+  // Thêm vào màn hình chính: Android hiện hộp cài đặt; iPhone hướng dẫn bấm Chia sẻ.
+  const nutCai = document.getElementById('btn-cai');
+  const daCai = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  if (!daCai) {
+    let hoiCai = null;
+    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); hoiCai = e; nutCai.hidden = false; });
+    window.addEventListener('appinstalled', () => { nutCai.hidden = true; });
+    if (/iphone|ipad|ipod/i.test(navigator.userAgent)) nutCai.hidden = false;
+    nutCai.addEventListener('click', async () => {
+      if (hoiCai) { hoiCai.prompt(); await hoiCai.userChoice; hoiCai = null; nutCai.hidden = true; }
+      else show('Trên iPhone: bấm nút Chia sẻ (hình vuông có mũi tên) ở thanh Safari, kéo xuống và chọn "Thêm vào MH chính".');
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

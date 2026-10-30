@@ -1,0 +1,29 @@
+{
+  "name": "muse-chinh-anh",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Web chỉnh ảnh theo yêu cầu / ảnh phong cách: khách gửi lên, file vào Google Drive, Muse chỉnh xong trả về. File tự xóa sau 2 ngày.",
+  "main": "server/index.js",
+  "engines": {
+    "node": ">=22.9"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server/index.js",
+    "get-token": "node --env-file-if-exists=.env scripts/get-refresh-token.js",
+    "test": "node --test server/index.test.js server/auto-muse.test.js scripts/muse.test.js scripts/envfile.test.js scripts/relight.test.js",
+    "demo": "node scripts/demo.js",
+    "muse": "node --env-file-if-exists=.env scripts/muse.js",
+    "setup": "node scripts/setup-env.js",
+    "relight": "node scripts/relight.js",
+    "muse-auto": "node --env-file-if-exists=.env scripts/muse-auto.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "googleapis": "^188.0.0",
+    "multer": "^2.0.2"
+  },
+  "optionalDependencies": {
+    "sharp": "^0.35.5"
+  }
+}
